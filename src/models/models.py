@@ -5,12 +5,19 @@ from textattack.models.helpers import LSTMForClassification
 import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
 from transformers import pipeline
+from tqdm import tqdm
 
 def evaluate_huggingface(model, tokenizer, inputs, labels):
     device = 0 if torch.cuda.is_available() else -1
     pipe = pipeline("text-classification", model=model, tokenizer=tokenizer, device=device)
-    out = pipe(inputs.to_list())
-    print(([int(x['label'][-1]) for x in out] == labels).sum() / len(labels))
+
+    out = []
+    # Transformers pipelines do not support batching at the moment
+    for x in tqdm(inputs.to_list()):
+        out.extend(pipe(x))
+
+    out = np.array(out)
+    return ([int(x['label'][-1]) for x in out] == labels).sum() / len(labels)
 
 
 def evaluate_torch(model, tokenizer, inputs, labels):
@@ -34,7 +41,7 @@ def evaluate_torch(model, tokenizer, inputs, labels):
         pred = torch.softmax(out, dim=1).argmax(dim=1)
         correct += (pred == labels).sum()
 
-    print(correct / len(loader.dataset))
+    return correct / len(loader.dataset)
 
 
 def get_model_by_name(model_name, with_wrapper=True):
