@@ -16,8 +16,13 @@ def train_detectors():
 
 
 if __name__ == '__main__':
-    shap_org = np.load('data/SHAP_signatures/normal/distilbert_pwws_agnews_org.npy')
-    shap_adv = np.load('data/SHAP_signatures/adversarial/distilbert_pwws_agnews_adv.npy')
+    shap_org = np.load('data/SHAP_signatures/normal/lstm_bae_sst2_org.npy')
+    shap_adv = np.load('data/SHAP_signatures/adversarial/lstm_bae_sst2_adv.npy')
+
+    print(f'Org shape: {shap_org.shape}')
+    print(f'Adv shape: {shap_adv.shape}')
+
+
 
     data = np.concatenate((shap_org, shap_adv))
     org_labels = np.zeros((shap_org.shape[0],), dtype=np.int16)
@@ -25,18 +30,26 @@ if __name__ == '__main__':
     gt = np.concatenate((org_labels, adv_labels))
 
 
-    x_train, x_test, y_train, y_test = train_test_split(data, gt, random_state=0, shuffle=True, train_size=0.8)
+    x_train, x_test, y_train, y_test = train_test_split(data, gt, random_state=0, shuffle=True, train_size=0.9)
 
     print(f'Size: {x_train.shape}')
 
-    '''randomF = SVC(random_state=42)
+    randomF = RandomForestClassifier(random_state=42)
     randomF.fit(x_train, y_train)
     preds = randomF.predict(x_test)
-    print(accuracy_score(y_test, preds))
-'''
+    print(f'Random Forest: {accuracy_score(y_test, preds):.3f}')
+
+    svc = SVC(random_state=42)
+    svc.fit(x_train, y_train)
+    preds = svc.predict(x_test)
+    print(f'SVC: {accuracy_score(y_test, preds):.3f}')
+
+
+    input_shape = x_train.shape[1]
+
 
     model = keras.Sequential([
-        keras.layers.Dense(400, input_shape=(512,), activation='relu', kernel_regularizer=keras.regularizers.l1(0.00001),
+        keras.layers.Dense(400, input_shape=(input_shape,), activation='relu', kernel_regularizer=keras.regularizers.l1(0.00001),
                               ),
         keras.layers.Dropout(0.5, seed=42),
         keras.layers.Dense(400, activation='relu', kernel_regularizer=keras.regularizers.l1(0.00001),
