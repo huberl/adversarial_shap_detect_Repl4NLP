@@ -1,6 +1,26 @@
 adversarial_shap_detect
 ==============================
 
+If you find our work useful or use our code, please cite our RepL4NLP 2022 Paper
+
+```
+@inproceedings{mosca-etal-2022-detecting,
+    title = "Detecting Word-Level Adversarial Text Attacks via {SH}apley Additive ex{P}lanations",
+    author = {Mosca, Edoardo  and
+      Huber, Lukas  and
+      Alexander K{\"u}hn, Marc  and
+      Groh, Georg},
+    booktitle = "Proceedings of the 7th Workshop on Representation Learning for NLP",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.repl4nlp-1.16",
+    pages = "156--166",
+    abstract = "State-of-the-art machine learning models are prone to adversarial attacks{''}:'' Maliciously crafted inputs to fool the model into making a wrong prediction, often with high confidence. While defense strategies have been extensively explored in the computer vision domain, research in natural language processing still lacks techniques to make models resilient to adversarial text inputs. We adapt a technique from computer vision to detect word-level attacks targeting text classifiers. This method relies on training an adversarial detector leveraging Shapley additive explanations and outperforms the current state-of-the-art on two benchmarks. Furthermore, we prove the detector requires only a low amount of training samples and, in some cases, generalizes to different datasets without needing to retrain.",
+}
+```
+
 Adversarial attack detection for NLP models using SHAP.
 
 Project Organization
